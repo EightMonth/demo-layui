@@ -10,6 +10,13 @@ spring:
     cache: false
   mvc:
     static-path-pattern: /static/**
+
+  devtools:
+    restart:
+      enabled: true
+      additional-paths:
+        - src/main/java
+        - src/main/resources
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
