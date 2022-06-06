@@ -5,6 +5,7 @@ import com.example.demolayui.entity.SysRole;
 import com.example.demolayui.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class RoleService extends ServiceImpl<RoleMapper, SysRole> {
 
     public List<SysRole> findByUserId(Long userId) {
         List<SysRole> sysRoleList = baseMapper.findByUserId(userId);
+        if (CollectionUtils.isEmpty(sysRoleList)) {
+            return null;
+        }
         fillPermission(sysRoleList);
         return sysRoleList;
     }
@@ -35,5 +39,9 @@ public class RoleService extends ServiceImpl<RoleMapper, SysRole> {
 
     private void fillPermission(List<SysRole> sysRoleList) {
         sysRoleList.forEach(this::fillPermission);
+    }
+
+    public List<SysRole> findByRoleNames(List<String> roleNames) {
+        return baseMapper.findByNames(roleNames);
     }
 }

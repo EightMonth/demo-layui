@@ -16,4 +16,7 @@ import java.util.List;
 public interface PermissionMapper extends BaseMapper<SysPermission> {
     @Select("select p.* from t_sys_permission p inner join t_sys_role_permission rp on rp.permission_id = p.id where rp.role_id = #{roleId}")
     List<SysPermission> findByRoleId(@Param("roleId") Long id);
+
+    @Select({"<script>select p.* from t_sys_permission p inner join t_sys_menu_permission mp on mp.permission_id = p.id where mp.menu_id in <foreach collection='menuIds' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>"})
+    List<SysPermission> findByMenuIds(@Param("menuIds") List<Long> menuIds);
 }

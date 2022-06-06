@@ -116,13 +116,14 @@
             } else if (obj.event === 'delete') {  // 监听删除操作
                 var checkStatus = table.checkStatus('currentTableId')
                     , data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
+                $.ajax({
+                    url: '/user/' + data.map(item => item.id).join(","),
+                    type: 'DELETE',
+                    contentType: 'application/json'
+                })
+                layer.close(index);
+                location.reload();
             }
-        });
-
-        //监听表格复选框选择
-        table.on('checkbox(currentTableFilter)', function (obj) {
-            console.log(obj)
         });
 
         table.on('tool(currentTableFilter)', function (obj) {
@@ -136,7 +137,14 @@
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '../page/table/edit.html',
+                    content: '/user/edit',
+                    success: function(layero, index) {
+                        var form = layero.find('iframe').contents().find('#editForm');
+                        form.find('#id').val(data.id);
+                        form.find('#username').val(data.username);
+                        form.find('#password').val(data.password);
+                        form.find('#nickname').val(data.nickName);
+                    }
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
@@ -150,6 +158,7 @@
                         contentType: 'application/json'
                     })
                     layer.close(index);
+                    location.reload();
                 });
             }
         });

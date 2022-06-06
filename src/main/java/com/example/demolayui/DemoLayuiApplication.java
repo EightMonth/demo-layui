@@ -69,7 +69,7 @@ public class DemoLayuiApplication {
             // deny 不允许iframe嵌入、sameOrigin 只允许本站iframe嵌入，allowfrom 只能被指定站点嵌入
             http.headers().frameOptions().sameOrigin()
                     .and().csrf().disable().authorizeRequests()
-                    .antMatchers("/swagger**/**", "/**/api-docs/**", "/swagger-resources/**", "/webjars/**", "/login", "/css/**", "/js/**", "/lib/**", "images/**", "/api/**").permitAll()
+                    .antMatchers("/swagger**/**", "/**/api-docs/**", "/swagger-resources/**", "/webjars/**", "/login", "/css/**", "/js/**", "/lib/**", "/images/**", "/api/**").permitAll()
                     .anyRequest().access("@rbacService.hasPermission(request, authentication)")
                     .and().formLogin().loginPage("/login").loginProcessingUrl("/loginPost").failureForwardUrl("/login?error").permitAll()
                     .and().logout().logoutSuccessUrl("/login").permitAll()

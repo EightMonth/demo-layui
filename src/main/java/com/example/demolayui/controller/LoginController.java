@@ -1,8 +1,10 @@
 package com.example.demolayui.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author kezhijie@wuhandsj.com
@@ -22,7 +24,10 @@ public class LoginController {
 
 
     @GetMapping("/")
-    public String index() {
-        return "index";
+    public ModelAndView index() {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("index");
+        mav.addObject("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return mav;
     }
 }

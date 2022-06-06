@@ -1,7 +1,9 @@
 package com.example.demolayui.rbac;
 
+import com.example.demolayui.entity.SysMenu;
 import com.example.demolayui.entity.SysPermission;
 import com.example.demolayui.entity.SysRole;
+import com.example.demolayui.mapper.MenuMapper;
 import com.example.demolayui.mapper.PermissionMapper;
 import com.example.demolayui.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class RbacService {
     private RoleMapper roleMapper;
     @Autowired
     private PermissionMapper permissionMapper;
+    @Autowired
+    private MenuMapper menuMapper;
 
     @Autowired
     private PathMatcher pathMatcher;
@@ -62,12 +66,10 @@ public class RbacService {
      */
     private List<String> privilegeUrls(List<String> roleNames) {
         List<SysRole> roles = roleMapper.findByNames(roleNames);
-        for (SysRole role : roles) {
-            role.setPermissions(permissionMapper.findByRoleId(role.getId()));
-        }
+        List<SysMenu> menus = menuMapper.findByRoleIds(roles.stream().map(SysRole::getId).collect(Collectors.toList()));
+        List<SysPermission> permissions = permissionMapper.findByMenuIds(menus.stream().map(SysMenu::getId).collect(Collectors.toList()));
 
-        return roles.parallelStream()
-                .flatMap(p -> p.getPermissions().stream())
+        return permissions.parallelStream()
                 .map(SysPermission::getUrl)
                 .distinct()
                 .collect(Collectors.toList());

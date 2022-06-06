@@ -60,14 +60,7 @@
                 success: function() {
                     var iframeIndex = parent.layer.getFrameIndex(window.name);
                     parent.layer.close(iframeIndex);
-                    parent.table.reload('currentTableId', {
-                        page: {
-                            curr: 1
-                        }
-                        , where: {
-                            searchParams: result
-                        }
-                    }, 'data');
+                    parent.location.reload();
                 }
             });
 

@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/page")
 public class IndexController {
 
+    @GetMapping("white")
+    public String white() {
+        return "white";
+    }
+
     @GetMapping("404.html")
     public String page404() {
         return "page/404";

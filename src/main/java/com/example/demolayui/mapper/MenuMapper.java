@@ -18,6 +18,9 @@ public interface MenuMapper extends BaseMapper<SysMenu> {
     @Select("select * from t_sys_menu where code = #{code}")
     SysMenu findByCode(@Param("code") String code);
 
-    @Select("select * from t_sys_menu where parent_id = #{parentId}")
-    List<SysMenu> findByParenId(@Param("parentId") Long parentId);
+    @Select({"<script>select * from t_sys_menu where parent_id = #{parentId} and id in <foreach collection='authorityMenu' item='authId' open='(' separator=',' close=')'>#{authId}</foreach></script>"})
+    List<SysMenu> findByParenId(@Param("parentId") Long parentId, @Param("authorityMenu") List<Long> authorityMenuIds);
+
+    @Select({"<script>select m.* from t_sys_menu m inner join t_sys_role_menu rm on m.id = rm.menu_id where rm.role_id in <foreach collection='roleIds' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>"})
+    List<SysMenu> findByRoleIds(@Param("roleIds") List<Long> roleIds);
 }
