@@ -28,4 +28,8 @@ public class PermissionService extends ServiceImpl<PermissionMapper, SysPermissi
 
         return baseMapper.findByMenuIds(menus.stream().map(SysMenu::getId).collect(Collectors.toList()));
     }
+
+    public List<SysPermission> findByMenuId(Long menuId) {
+        return baseMapper.findByMenuIds(Stream.of(menuId).collect(Collectors.toList()));
+    }
 }

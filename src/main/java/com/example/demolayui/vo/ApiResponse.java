@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2022/6/2 14:26
  */
 @Data
-public class ResponseData<T> implements Serializable {
+public class ApiResponse<T> implements Serializable {
     private static final long serialVersionUID = 1007922859806400775L;
 
     private Integer code;

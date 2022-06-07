@@ -14,12 +14,10 @@ import org.springframework.core.env.Profiles;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -31,6 +29,7 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 
 @SpringBootApplication
@@ -46,6 +45,8 @@ public class DemoLayuiApplication {
 
         @Autowired
         private CustomUserService userService;
+        @Autowired
+        private DataSource dataSource;
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -71,10 +72,10 @@ public class DemoLayuiApplication {
                     .and().csrf().disable().authorizeRequests()
                     .antMatchers("/swagger**/**", "/**/api-docs/**", "/swagger-resources/**", "/webjars/**", "/login", "/css/**", "/js/**", "/lib/**", "/images/**", "/api/**").permitAll()
                     .anyRequest().access("@rbacService.hasPermission(request, authentication)")
-                    .and().formLogin().loginPage("/login").loginProcessingUrl("/loginPost").failureForwardUrl("/login?error").permitAll()
+                    .and().formLogin().loginPage("/login").loginProcessingUrl("/loginPost").permitAll()
                     .and().logout().logoutSuccessUrl("/login").permitAll()
+                    .and().exceptionHandling().accessDeniedPage("/page/white")
                     ;
-
         }
 
     }
@@ -104,21 +105,6 @@ public class DemoLayuiApplication {
             return paginationInterceptor;
         }
 
-//        @Bean
-//        public MetaObjectHandler metaObjectHandler() {
-//            return new MetaObjectHandler() {
-//                @Override
-//                public void insertFill(MetaObject metaObject) {
-//                    this.setFieldValByName("createTime", new Date(), metaObject);
-//                    this.setFieldValByName("updateTime", new Date(), metaObject);
-//                }
-//
-//                @Override
-//                public void updateFill(MetaObject metaObject) {
-//                    this.setFieldValByName("updateTime", new Date(), metaObject);
-//                }
-//            };
-//        }
     }
 
     @Configuration

@@ -249,6 +249,58 @@
       "updateTime": "2018/07/21 13:56:43",
       "isMenu": 1,
       "parentId": 18
+    },
+    {
+      "authorityId": 16,
+      "authorityName": "修改权限",
+      "orderNumber": 16,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/07/13 09:13:42",
+      "authority": "authorities:edit",
+      "checked": 0,
+      "updateTime": "2018/07/13 09:13:42",
+      "isMenu": 1,
+      "parentId": 13
+    },
+    {
+      "authorityId": 17,
+      "authorityName": "删除权限",
+      "orderNumber": 17,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/06/29 11:05:41",
+      "authority": "authorities:delete",
+      "checked": 0,
+      "updateTime": "2018/06/29 11:05:41",
+      "isMenu": 1,
+      "parentId": 13
+    },
+    {
+      "authorityId": 18,
+      "authorityName": "登录日志",
+      "orderNumber": 18,
+      "menuUrl": "system/loginRecord",
+      "menuIcon": null,
+      "createTime": "2018/06/29 11:05:41",
+      "authority": null,
+      "checked": 0,
+      "updateTime": "2018/06/29 11:05:41",
+      "isMenu": 0,
+      "parentId": 1
+    },
+    {
+      "authorityId": 19,
+      "authorityName": "查询登录日志",
+      "orderNumber": 19,
+      "menuUrl": "",
+      "menuIcon": "",
+      "createTime": "2018/07/21 13:56:43",
+      "authority": "loginRecord:view",
+      "checked": 0,
+      "updateTime": "2018/07/21 13:56:43",
+      "isMenu": 1,
+      "parentId": 18
     }
   ]
 }

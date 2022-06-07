@@ -22,4 +22,7 @@ public class SysPermission implements Serializable {
     private String url;
     private Date createTime;
     private Date modifyTime;
+    private String code;
+    private String type;
+    private String name;
 }

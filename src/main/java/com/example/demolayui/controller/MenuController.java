@@ -5,11 +5,13 @@ import com.example.demolayui.service.MenuService;
 import com.example.demolayui.vo.HomeInfo;
 import com.example.demolayui.vo.IndexVO;
 import com.example.demolayui.vo.LogoInfo;
+import com.example.demolayui.vo.MenuAndPermissionVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +20,34 @@ import java.util.List;
  * @author kezhijie@wuhandsj.com
  * @date 2022/5/30 15:42
  */
-@RestController
+@Controller
 @RequestMapping("menus")
 public class MenuController {
 
     @Autowired
     private MenuService menuService;
 
+    @GetMapping("list")
+    public String listPage() {
+        return "/menu/list";
+    }
+    @GetMapping("add")
+    public String addPage() {
+        return "/menu/add";
+    }
+    @GetMapping("edit")
+    public String editPage() {
+        return "/menu/edit";
+    }
+
     @GetMapping("tree")
+    @ResponseBody
     public SysMenu tree() {
         return menuService.tree();
     }
 
     @GetMapping("index_info")
+    @ResponseBody
     public IndexVO indexInfo() {
         LogoInfo logoInfo = new LogoInfo();
         logoInfo.setTitle("DEMO LAYUI");
@@ -57,5 +74,18 @@ public class MenuController {
             return getFirstMenu(menus.get(0).getChild());
         }
         return menus.get(0);
+    }
+
+    @GetMapping
+    public List<MenuAndPermissionVO> menuList() {
+        List<MenuAndPermissionVO> menus = new ArrayList<>();
+        SysMenu sysMenu = menuService.treeAndPermissions();
+        return null;
+    }
+
+    public void convert(SysMenu sysMenu, List<MenuAndPermissionVO> menus) {
+        MenuAndPermissionVO mp = new MenuAndPermissionVO();
+        mp.setMenuId(sysMenu.getId());
+
     }
 }

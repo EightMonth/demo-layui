@@ -26,11 +26,26 @@ public class MenuService extends ServiceImpl<MenuMapper, SysMenu> {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private PermissionService permissionService;
 
     public SysMenu tree() {
         SysMenu root = rootMenu();
         root.setChild(treeRecursion(root));
         return root;
+    }
+
+    public SysMenu treeAndPermissions() {
+        SysMenu root = tree();
+        loadPermission(root);
+        return root;
+    }
+
+    public void loadPermission(SysMenu sysMenu) {
+        sysMenu.setPermissions(permissionService.findByMenuId(sysMenu.getId()));
+        if (!CollectionUtils.isEmpty(sysMenu.getChild())) {
+            sysMenu.getChild().forEach(this::loadPermission);
+        }
     }
 
     private List<SysMenu> treeRecursion(SysMenu menu){

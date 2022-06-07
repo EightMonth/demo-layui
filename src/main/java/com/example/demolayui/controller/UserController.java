@@ -1,23 +1,22 @@
 package com.example.demolayui.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demolayui.entity.SysUser;
+import com.example.demolayui.exception.BusinessException;
+import com.example.demolayui.exception.ExceptionEnum;
 import com.example.demolayui.service.UserService;
-import com.example.demolayui.vo.ResponseData;
-import org.apache.catalina.User;
+import com.example.demolayui.vo.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +32,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("list")
     public String listPage() {
@@ -71,9 +72,9 @@ public class UserController {
 
     @GetMapping("/page")
     @ResponseBody
-    public ResponseData<SysUser> page(@RequestParam("page") Integer page,
-                                      @RequestParam("limit") Integer limit,
-                                      @RequestParam(value = "searchParams", required = false) String searchParams) {
+    public ApiResponse<SysUser> page(@RequestParam("page") Integer page,
+                                     @RequestParam("limit") Integer limit,
+                                     @RequestParam(value = "searchParams", required = false) String searchParams) {
 
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         if (StringUtils.hasText(searchParams)) {
@@ -86,7 +87,7 @@ public class UserController {
         pageParam.setSize(limit);
         Page<SysUser> pageUser = userService.page(pageParam, queryWrapper);
 
-        ResponseData<SysUser> returnData = new ResponseData<>();
+        ApiResponse<SysUser> returnData = new ApiResponse<>();
         returnData.setCode(0);
         returnData.setData(pageUser.getRecords());
         returnData.setCount(pageUser.getTotal());
@@ -113,7 +114,6 @@ public class UserController {
         SysUser old = userService.getById(sysUser.getId());
 
         old.setUsername(sysUser.getUsername());
-        old.setPassword(sysUser.getPassword());
         old.setNickName(sysUser.getNickName());
 
         userService.updateById(old);
@@ -122,7 +122,15 @@ public class UserController {
     @PostMapping("modify_password")
     @ResponseBody
     public void modifyPassword(@RequestBody Map<String, String> param) {
-        System.out.println(param);
+        SysUser sysUser = (SysUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!passwordEncoder.matches(param.get("old_password"), sysUser.getPassword())) {
+            throw new BusinessException(ExceptionEnum.BAD_REQUEST.getCode(), ExceptionEnum.BAD_REQUEST.getMessage(), "原密码输入不正确");
+        }
+
+        sysUser.setPassword(passwordEncoder.encode(param.get("again_password")));
+        sysUser.setModifyTime(new Date());
+
+        userService.updateById(sysUser);
     }
 
 }

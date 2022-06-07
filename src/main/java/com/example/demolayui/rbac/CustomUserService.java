@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.util.ServletContextPropertyUtils;
+import org.springframework.web.util.WebUtils;
 
 /**
  * @author kezhijie@wuhandsj.com
@@ -21,6 +23,7 @@ public class CustomUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         SysUser loginUser = userService.findByUsername(username);
 
         if (!ObjectUtils.isEmpty(loginUser)) {

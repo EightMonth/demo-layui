@@ -55,4 +55,6 @@ public class SysMenu implements Serializable {
      */
     @TableField(exist = false)
     private List<SysMenu> child;
+    @TableField(exist = false)
+    private List<SysPermission> permissions;
 }
