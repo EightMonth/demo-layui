@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,6 +18,19 @@ import java.util.List;
 public class RoleService extends ServiceImpl<RoleMapper, SysRole> {
     @Autowired
     private PermissionService permissionService;
+
+    @Override
+    public boolean save(SysRole entity) {
+        entity.setCreateTime(new Date());
+        entity.setModifyTime(new Date());
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(SysRole entity) {
+        entity.setModifyTime(new Date());
+        return super.updateById(entity);
+    }
 
     public List<SysRole> findByUserId(Long userId) {
         List<SysRole> sysRoleList = baseMapper.findByUserId(userId);

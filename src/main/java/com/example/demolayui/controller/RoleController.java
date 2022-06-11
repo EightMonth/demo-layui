@@ -4,15 +4,19 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demolayui.entity.SysRole;
+import com.example.demolayui.entity.SysUser;
 import com.example.demolayui.service.RoleService;
 import com.example.demolayui.vo.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author kezhijie@wuhandsj.com
@@ -36,6 +40,10 @@ public class RoleController {
     @GetMapping("edit")
     public String editPage() {
         return "/role/edit";
+    }
+    @GetMapping("menu")
+    public String menuPage() {
+        return "/role/menu";
     }
 
     @GetMapping("page")
@@ -61,5 +69,38 @@ public class RoleController {
         returnData.setMsg("");
 
         return returnData;
+    }
+
+    @PostMapping
+    @ResponseBody
+    public void add(@RequestBody SysRole sysRole) {
+        roleService.save(sysRole);
+    }
+
+    @DeleteMapping("/{ids}")
+    @ResponseBody
+    public void delete(@PathVariable String ids) {
+        List<Long> rmIds = Stream.of(ids.split(",")).map(Long::valueOf).collect(Collectors.toList());
+        roleService.removeByIds(rmIds);
+    }
+
+    @PutMapping
+    @ResponseBody
+    public void update(@RequestBody SysRole sysRole) {
+        SysRole old = roleService.getById(sysRole.getId());
+
+        old.setCode(sysRole.getCode());
+        old.setName(sysRole.getName());
+        old.setRemark(sysRole.getRemark());
+
+        roleService.updateById(old);
+    }
+
+    @GetMapping("/role/menu")
+    @ResponseBody
+    public void roleMenu(@RequestBody Long roleId) {
+
+
+
     }
 }

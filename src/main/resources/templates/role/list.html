@@ -19,9 +19,9 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">用户姓名</label>
+                            <label class="layui-form-label">角色名</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="username" autocomplete="off" class="layui-input">
+                                <input type="text" name="name" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -44,6 +44,7 @@
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="permission">编辑权限</a>
         </script>
 
     </div>
@@ -57,7 +58,7 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '/user/page',
+            url: '/role/page',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -67,11 +68,11 @@
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'id',  title: 'ID', sort: true},
-                {field: 'username',  title: '用户名'},
-                {field: 'nickName',  title: '昵称', },
+                {field: 'code',  title: 'code'},
+                {field: 'name',  title: '角色名' },
+                {field: 'remark', title: '备注'},
                 {field: 'createTime',  title: '创建时间', templet: "<div>{{layui.util.toDateString(d.createTime)}}</div>"},
                 {field: 'modifyTime', title: '修改时间', templet: "<div>{{layui.util.toDateString(d.modifyTime)}}</div>"},
-                {field: 'lastLoginTime', title: '最后登录时间', sort: true, templet: "<div>{{layui.util.toDateString(d.lastLoginTime)}}</div>"},
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
@@ -102,13 +103,13 @@
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
                 var index = layer.open({
-                    title: '添加用户',
+                    title: '添加角色',
                     type: 2,
                     shade: 0.2,
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '/user/add',
+                    content: '/role/add',
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
@@ -117,7 +118,7 @@
                 var checkStatus = table.checkStatus('currentTableId')
                     , data = checkStatus.data;
                 $.ajax({
-                    url: '/user/' + data.map(item => item.id).join(","),
+                    url: '/role/' + data.map(item => item.id).join(","),
                     type: 'DELETE',
                     contentType: 'application/json'
                 })
@@ -131,19 +132,19 @@
             if (obj.event === 'edit') {
 
                 var index = layer.open({
-                    title: '编辑用户',
+                    title: '编辑角色',
                     type: 2,
                     shade: 0.2,
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '/user/edit',
+                    content: '/role/edit',
                     success: function(layero, index) {
                         var form = layero.find('iframe').contents().find('#editForm');
                         form.find('#id').val(data.id);
-                        form.find('#username').val(data.username);
-                        form.find('#password').val(data.password);
-                        form.find('#nickname').val(data.nickName);
+                        form.find('#code').val(data.code);
+                        form.find('#name').val(data.name);
+                        form.find('#remark').val(data.remark);
                     }
                 });
                 $(window).on("resize", function () {
@@ -153,13 +154,30 @@
             } else if (obj.event === 'delete') {
                 layer.confirm('真的删除行么', function (index) {
                     $.ajax({
-                        url: '/user/' + Number(data.id),
+                        url: '/role/' + Number(data.id),
                         type: 'DELETE',
                         contentType: 'application/json'
                     })
                     layer.close(index);
                     location.reload();
                 });
+            } else if (obj.event === 'permission') {
+                var index = layer.open({
+                    title: '菜单列表',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '/role/menu',
+                    success: function(layero, index) {
+                        var form = layero.find('iframe').contents().find('#menuForm');
+                        form.find('#id').val(data.id);
+                    }
+                });
+                $(window).on('resize', function(){
+                    layer.full(index);
+                })
             }
         });
 

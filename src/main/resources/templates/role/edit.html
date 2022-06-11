@@ -18,16 +18,21 @@
 <div class="layui-form layuimini-form" id="editForm">
     <input type="hidden" name="id" id="id">
     <div class="layui-form-item">
-        <label class="layui-form-label required">用户名</label>
+        <label class="layui-form-label required">code</label>
         <div class="layui-input-block">
-            <input type="text" id="username" name="username" lay-verify="required" lay-reqtext="用户名不能为空" placeholder="请输入用户名" value="" class="layui-input">
-            <tip>填写自己管理账号的名称。</tip>
+            <input type="text" id="code" name="code" lay-verify="required" lay-reqtext="code不能为空" placeholder="请输入code" value="" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label required">昵称</label>
+        <label class="layui-form-label required">角色名</label>
         <div class="layui-input-block">
-            <input type="text" id="nickname" name="nickName" lay-verify="required" lay-reqtext="昵称不能为空" placeholder="请输入昵称" value="" class="layui-input">
+            <input type="text" id="name" name="name" lay-verify="required" lay-reqtext="角色名不能为空" placeholder="请输入角色名" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">备注</label>
+        <div class="layui-input-block">
+            <input type="text" id="remark" name="remark" placeholder="请输入备注" value="" class="layui-input">
         </div>
     </div>
 
@@ -48,7 +53,7 @@
         //监听提交
         form.on('submit(saveBtn)', function (data) {
             $.ajax({
-                url: '/user',
+                url: '/role',
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(data.field),

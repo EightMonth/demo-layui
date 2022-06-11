@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.PathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +67,9 @@ public class RbacService {
      */
     private List<String> privilegeUrls(List<String> roleNames) {
         List<SysRole> roles = roleMapper.findByNames(roleNames);
+        if(CollectionUtils.isEmpty(roles)) {
+            return new ArrayList<>();
+        }
         List<SysMenu> menus = menuMapper.findByRoleIds(roles.stream().map(SysRole::getId).collect(Collectors.toList()));
         List<SysPermission> permissions = permissionMapper.findByMenuIds(menus.stream().map(SysMenu::getId).collect(Collectors.toList()));
 
