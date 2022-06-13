@@ -3,16 +3,16 @@ package com.example.demolayui.controller;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.demolayui.entity.SysMenu;
 import com.example.demolayui.entity.SysRole;
-import com.example.demolayui.entity.SysUser;
+import com.example.demolayui.service.MenuService;
 import com.example.demolayui.service.RoleService;
 import com.example.demolayui.vo.ApiResponse;
+import com.example.demolayui.vo.RoleMenuVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +28,8 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MenuService menuService;
 
     @GetMapping("list")
     public String listPage() {
@@ -96,11 +98,21 @@ public class RoleController {
         roleService.updateById(old);
     }
 
-    @GetMapping("/role/menu")
+    @GetMapping("/menus")
     @ResponseBody
-    public void roleMenu(@RequestBody Long roleId) {
+    public ApiResponse<SysMenu> roleMenu(Long roleId) {
+        List<SysMenu> menus = menuService.list();
+        ApiResponse<SysMenu> result = new ApiResponse<>();
+        result.setData(menus);
+        result.setCount((long) menus.size());
+        result.setCode(0);
+        result.setMsg("");
+        return result;
+    }
 
-
-
+    @PostMapping("add_menu")
+    @ResponseBody
+    public void addMenu(@RequestBody RoleMenuVO roleMenuVO) {
+        roleService.addMenu(roleMenuVO.getRoleId(), roleMenuVO.getMenuIds());
     }
 }

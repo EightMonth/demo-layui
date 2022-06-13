@@ -5,6 +5,7 @@
     <title>menu</title>
     <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
     <link rel="stylesheet" href="../css/public.css" media="all">
+    <link rel="stylesheet" href="../css/ztree/zTreeStyle/zTreeStyle.css" media="all">
     <style>
         .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
             height: 34px;
@@ -23,12 +24,17 @@
                 <button class="layui-btn layui-btn-normal" id="btn-fold">全部折叠</button>
             </div>
             <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+
+            <ul id="treeDemo" class="ztree"></ul>
         </div>
     </div>
 </div>
 
 <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
 <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="UTF-8"></script>
+<script src="../js/ztree/jquery.ztree.core.js" charset="UTF-8"></script>
+<script src="../js/ztree/jquery.ztree.excheck.js" charset="UTF-8"></script>
 <script th:inline="none">
     layui.use(['table', 'treetable'], function () {
         var $ = layui.jquery;
@@ -41,14 +47,15 @@
         treetable.render({
             treeColIndex: 1,
             treeSpid: -1,
-            treeIdName: 'authorityId',
+            treeIdName: 'id',
             treePidName: 'parentId',
             elem: '#munu-table',
-            url: '../api/menus.json?roleId=roleId',
+            url: '/role/menus?roleId='+roleId,
             page: false,
             cols: [[
+                {type:"hidden", field: 'id'},
                 {type: "checkbox", width: 50},
-                {field: 'authorityName', minWidth: 200, title: '菜单名称'}
+                {field: 'title', minWidth: 200, title: '菜单名称'}
             ]],
             done: function () {
                 layer.closeAll('loading');
@@ -62,6 +69,63 @@
         $('#btn-fold').click(function () {
             treetable.foldAll('#munu-table');
         });
+    });
+
+    var setting = {
+        check: {
+            enable: true,
+            chkboxType: {
+                "Y": "ps",
+                "N": "ps"
+            }
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+
+    var zNodes =[
+        { id:1, pId:0, name:"随意勾选 1", open:true},
+        { id:11, pId:1, name:"随意勾选 1-1", open:true},
+        { id:111, pId:11, name:"随意勾选 1-1-1"},
+        { id:112, pId:11, name:"随意勾选 1-1-2"},
+        { id:12, pId:1, name:"随意勾选 1-2", open:true},
+        { id:121, pId:12, name:"随意勾选 1-2-1"},
+        { id:122, pId:12, name:"随意勾选 1-2-2"},
+        { id:2, pId:0, name:"随意勾选 2", checked:true, open:true},
+        { id:21, pId:2, name:"随意勾选 2-1"},
+        { id:22, pId:2, name:"随意勾选 2-2", open:true},
+        { id:221, pId:22, name:"随意勾选 2-2-1", checked:true},
+        { id:222, pId:22, name:"随意勾选 2-2-2"},
+        { id:23, pId:2, name:"随意勾选 2-3"}
+    ];
+    var code;
+
+    // function setCheck() {
+    //     var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+    //         py = $("#py").attr("checked")? "p":"",
+    //         sy = $("#sy").attr("checked")? "s":"",
+    //         pn = $("#pn").attr("checked")? "p":"",
+    //         sn = $("#sn").attr("checked")? "s":"",
+    //         type = { "Y":py + sy, "N":pn + sn};
+    //     zTree.setting.check.chkboxType = type;
+    //     showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
+    // }
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+        setCheck();
+        $("#py").bind("change", setCheck);
+        $("#sy").bind("change", setCheck);
+        $("#pn").bind("change", setCheck);
+        $("#sn").bind("change", setCheck);
     });
 </script>
 </body>

@@ -58,4 +58,11 @@ public class RoleService extends ServiceImpl<RoleMapper, SysRole> {
     public List<SysRole> findByRoleNames(List<String> roleNames) {
         return baseMapper.findByNames(roleNames);
     }
+
+    public void addMenu(Long roleId, List<Long> menuIds) {
+        baseMapper.removeAllMenu(roleId);
+        menuIds.forEach(m -> {
+            baseMapper.addMenu(roleId, m);
+        });
+    }
 }
