@@ -24,9 +24,9 @@ public interface RoleMapper extends BaseMapper<SysRole> {
     @Select("select r.* from t_sys_role r inner join t_sys_user_role ur on ur.role_id=r.id where ur.user_id = #{userId}")
     List<SysRole> findByUserId(@Param("userId") Long userId);
 
-    @Insert("insert into t_sys_role_menu(roleId, menuId) values(#{roleId}, #{menuId})))")
+    @Insert("insert into t_sys_role_menu(role_id, menu_id) values(#{roleId}, #{menuId})")
     void addMenu(@Param("roleId") Long roleId, @Param("menuId") Long menuId);
 
-    @Delete("delete from t_sys_role_menu where roleId = #{roleId}")
+    @Delete("delete from t_sys_role_menu where role_Id = #{roleId}")
     void removeAllMenu(@Param("roleId") Long roleId);
 }

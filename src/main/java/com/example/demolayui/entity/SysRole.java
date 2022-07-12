@@ -31,4 +31,10 @@ public class SysRole implements Serializable {
 
     @TableField(exist = false)
     private List<SysPermission> permissions = new ArrayList<>();
+
+    //页面样式字段
+    @TableField(exist = false)
+    private Boolean disabled;
+    @TableField(exist = false)
+    private Boolean checked;
 }

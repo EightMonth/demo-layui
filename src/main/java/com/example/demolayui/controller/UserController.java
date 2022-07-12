@@ -58,6 +58,10 @@ public class UserController {
     public String password() {
         return "user-password";
     }
+    @GetMapping("role")
+    public String role() {
+        return "/user/role";
+    }
 
     @GetMapping
     @ResponseBody

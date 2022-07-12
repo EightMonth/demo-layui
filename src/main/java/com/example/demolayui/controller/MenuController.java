@@ -2,10 +2,7 @@ package com.example.demolayui.controller;
 
 import com.example.demolayui.entity.SysMenu;
 import com.example.demolayui.service.MenuService;
-import com.example.demolayui.vo.HomeInfo;
-import com.example.demolayui.vo.IndexVO;
-import com.example.demolayui.vo.LogoInfo;
-import com.example.demolayui.vo.MenuAndPermissionVO;
+import com.example.demolayui.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -13,8 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author kezhijie@wuhandsj.com
@@ -44,6 +44,25 @@ public class MenuController {
     @ResponseBody
     public SysMenu tree() {
         return menuService.tree();
+    }
+
+    @GetMapping("treevo")
+    @ResponseBody
+    public Map<String, Object> treeVO(Long roleId) {
+        Map<String, Object> result = new HashMap<>();
+        List<MenuVO> list = new ArrayList<>();
+        MenuVO menuVO = menuService.treeVO(roleId);
+        list.add(menuVO);
+
+        Map<String, String> status = new HashMap<>();
+        status.put("code", "200");
+        status.put("message", "success");
+
+        result.put("data", list);
+        result.put("status", status);
+        result.put("code", 0);
+        result.put("msg", "success");
+        return result;
     }
 
     @GetMapping("index_info")

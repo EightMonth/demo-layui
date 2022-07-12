@@ -48,6 +48,12 @@ public class RoleController {
         return "/role/menu";
     }
 
+    @GetMapping
+    @ResponseBody
+    public List<SysRole> list() {
+        return roleService.list();
+    }
+
     @GetMapping("page")
     @ResponseBody
     public ApiResponse<SysRole> page(@RequestParam("page") Integer page,

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.demolayui.entity.SysMenu;
 import com.example.demolayui.entity.SysRole;
 import com.example.demolayui.mapper.MenuMapper;
+import com.example.demolayui.vo.CheckArr;
+import com.example.demolayui.vo.MenuVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +43,31 @@ public class MenuService extends ServiceImpl<MenuMapper, SysMenu> {
         SysMenu root = tree();
         loadPermission(root);
         return root;
+    }
+
+    public MenuVO treeVO(Long roleId) {
+        List<Long> recordMenuIds =baseMapper.findByRoleIds(Collections.singletonList(roleId)).stream().map(SysMenu::getId).collect(Collectors.toList());
+        return convertVO(tree(), recordMenuIds);
+    }
+
+    private MenuVO convertVO(SysMenu sysMenu, List<Long> recordMenuIds) {
+        MenuVO menuVO = new MenuVO();
+        menuVO.setTitle(sysMenu.getTitle());
+        menuVO.setId(sysMenu.getId());
+        menuVO.setParentId(sysMenu.getParentId());
+        menuVO.setLast(true);
+        List<CheckArr> checkArrs = new ArrayList<>();
+        CheckArr checkArr = new CheckArr();
+        checkArr.setChecked(recordMenuIds.contains(sysMenu.getId()) ? "1" : "0");
+        checkArrs.add(checkArr);
+        menuVO.setCheckArr(checkArrs);
+        if (!CollectionUtils.isEmpty(sysMenu.getChild())) {
+            List<MenuVO> children = new ArrayList<>();
+            sysMenu.getChild().forEach(p -> children.add(convertVO(p, recordMenuIds)));
+            menuVO.setChildren(children);
+            menuVO.setLast(false);
+        }
+        return menuVO;
     }
 
     public void loadPermission(SysMenu sysMenu) {

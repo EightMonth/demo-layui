@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>menu</title>
+    <title>授权菜单</title>
     <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
     <link rel="stylesheet" href="../css/public.css" media="all">
-    <link rel="stylesheet" href="../css/ztree/zTreeStyle/zTreeStyle.css" media="all">
+    <link rel="stylesheet" href="../js/lay-module/dtree/dtree.css" media="all">
+    <link rel="stylesheet" href="../js/lay-module/dtree/font/dtreefont.css" media="all">
     <style>
         .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
             height: 34px;
@@ -17,116 +18,75 @@
 <body>
 <div class="layuimini-container">
     <div  class="layui-form layuimini-form" id="menuForm">
-        <input type="hidden" name="id" id="id">
+        <input type="hidden" name="id" id="roleId">
         <div>
-            <div class="layui-btn-group">
-                <button class="layui-btn" id="btn-expand">全部展开</button>
-                <button class="layui-btn layui-btn-normal" id="btn-fold">全部折叠</button>
-            </div>
-            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
-
             <ul id="treeDemo" class="ztree"></ul>
+        </div>
+
+        <hr>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" id="checkbarTree">确认保存</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
 <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
-<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="UTF-8"></script>
-<script src="../js/ztree/jquery.ztree.core.js" charset="UTF-8"></script>
-<script src="../js/ztree/jquery.ztree.excheck.js" charset="UTF-8"></script>
 <script th:inline="none">
-    layui.use(['table', 'treetable'], function () {
-        var $ = layui.jquery;
-        var table = layui.table;
-        var treetable = layui.treetable;
+    layui.extend({
+        dtree: '../lay-module/dtree/dtree'
+    }).use(['dtree', 'layer', 'jquery'], function(){
+       var dtree = layui.dtree, layer = layui.layer, $ = layui.jquery;
 
-        var roleId = $("#id").val();
-        // 渲染表格
-        layer.load(2);
-        treetable.render({
-            treeColIndex: 1,
-            treeSpid: -1,
-            treeIdName: 'id',
-            treePidName: 'parentId',
-            elem: '#munu-table',
-            url: '/role/menus?roleId='+roleId,
-            page: false,
-            cols: [[
-                {type:"hidden", field: 'id'},
-                {type: "checkbox", width: 50},
-                {field: 'title', minWidth: 200, title: '菜单名称'}
-            ]],
-            done: function () {
-                layer.closeAll('loading');
+        var getQueryVariable  = function (variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) { return pair[1]; }
             }
-        });
-
-        $('#btn-expand').click(function () {
-            treetable.expandAll('#munu-table');
-        });
-
-        $('#btn-fold').click(function () {
-            treetable.foldAll('#munu-table');
-        });
-    });
-
-    var setting = {
-        check: {
-            enable: true,
-            chkboxType: {
-                "Y": "ps",
-                "N": "ps"
-            }
-        },
-        data: {
-            simpleData: {
-                enable: true
-            }
+            return (false);
         }
-    };
+        var roleId = getQueryVariable('roleId');
+        // 初始化树
+        var demoTree = dtree.render({
+            elem: '#treeDemo',
+            url: '/menus/treevo?roleId='+roleId,
+            checkbar: true,
+            // checkbarType: "no-all",
+            method: 'GET',
+            skin: 'laySimple'
+        });
 
-    var zNodes =[
-        { id:1, pId:0, name:"随意勾选 1", open:true},
-        { id:11, pId:1, name:"随意勾选 1-1", open:true},
-        { id:111, pId:11, name:"随意勾选 1-1-1"},
-        { id:112, pId:11, name:"随意勾选 1-1-2"},
-        { id:12, pId:1, name:"随意勾选 1-2", open:true},
-        { id:121, pId:12, name:"随意勾选 1-2-1"},
-        { id:122, pId:12, name:"随意勾选 1-2-2"},
-        { id:2, pId:0, name:"随意勾选 2", checked:true, open:true},
-        { id:21, pId:2, name:"随意勾选 2-1"},
-        { id:22, pId:2, name:"随意勾选 2-2", open:true},
-        { id:221, pId:22, name:"随意勾选 2-2-1", checked:true},
-        { id:222, pId:22, name:"随意勾选 2-2-2"},
-        { id:23, pId:2, name:"随意勾选 2-3"}
-    ];
-    var code;
+        $("#checkbarTree").click(function(){
+            var params = demoTree.getCheckbarNodesParam("checkbarTreea");
+            var menus = eval(params);
+            var menuIds = [];
+            for(var i=0; i<menus.length; i++) {
+                menuIds.push(Number(menus[i].nodeId));
+            }
+            var roleMenu = {};
+            roleMenu.roleId = getQueryVariable('roleId');
+            roleMenu.menuIds = menuIds;
 
-    // function setCheck() {
-    //     var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-    //         py = $("#py").attr("checked")? "p":"",
-    //         sy = $("#sy").attr("checked")? "s":"",
-    //         pn = $("#pn").attr("checked")? "p":"",
-    //         sn = $("#sn").attr("checked")? "s":"",
-    //         type = { "Y":py + sy, "N":pn + sn};
-    //     zTree.setting.check.chkboxType = type;
-    //     showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
-    // }
-    function showCode(str) {
-        if (!code) code = $("#code");
-        code.empty();
-        code.append("<li>"+str+"</li>");
-    }
+            $.ajax({
+                url: '/role/add_menu',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(roleMenu),
+                success: function() {
+                    layer.confirm('涉及权限被修改的用户，重新登录后生效', function (index) {
+                        var iframeIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(iframeIndex);
+                    });
+                }
+            });
+        });
 
-    $(document).ready(function(){
-        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
-        setCheck();
-        $("#py").bind("change", setCheck);
-        $("#sy").bind("change", setCheck);
-        $("#pn").bind("change", setCheck);
-        $("#sn").bind("change", setCheck);
     });
+
 </script>
 </body>
 </html>
