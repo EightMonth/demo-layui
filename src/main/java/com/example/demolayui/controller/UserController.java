@@ -8,6 +8,7 @@ import com.example.demolayui.exception.BusinessException;
 import com.example.demolayui.exception.ExceptionEnum;
 import com.example.demolayui.service.UserService;
 import com.example.demolayui.vo.ApiResponse;
+import com.example.demolayui.vo.UserRoleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -135,6 +136,12 @@ public class UserController {
         sysUser.setModifyTime(new Date());
 
         userService.updateById(sysUser);
+    }
+
+    @PostMapping("add_role")
+    @ResponseBody
+    public void addRole(@RequestBody UserRoleVO userRoleVO) {
+        userService.addRole(userRoleVO.getUserId(), userRoleVO.getRoleIds());
     }
 
 }

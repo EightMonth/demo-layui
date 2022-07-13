@@ -5,12 +5,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demolayui.entity.SysMenu;
 import com.example.demolayui.entity.SysRole;
+import com.example.demolayui.entity.SysUser;
 import com.example.demolayui.service.MenuService;
 import com.example.demolayui.service.RoleService;
+import com.example.demolayui.service.UserService;
 import com.example.demolayui.vo.ApiResponse;
 import com.example.demolayui.vo.RoleMenuVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +54,15 @@ public class RoleController {
 
     @GetMapping
     @ResponseBody
-    public List<SysRole> list() {
-        return roleService.list();
+    public List<SysRole> list(Long userId) {
+        List<SysRole> userRoles = roleService.findByUserId(userId);
+        List<SysRole> roles = roleService.list();
+
+        if (!CollectionUtils.isEmpty(userRoles)) {
+            roles.stream().filter(userRoles::contains).forEach(p -> p.setHave(true));
+        }
+
+        return roles;
     }
 
     @GetMapping("page")

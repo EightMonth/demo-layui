@@ -34,7 +34,11 @@ public class SysRole implements Serializable {
 
     //页面样式字段
     @TableField(exist = false)
-    private Boolean disabled;
+    private boolean disabled;
     @TableField(exist = false)
-    private Boolean checked;
+    private boolean checked;
+
+    // 是否拥有该角色
+    @TableField(exist = false)
+    private boolean have;
 }

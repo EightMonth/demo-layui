@@ -67,7 +67,8 @@
             }],
             cols: [[
                 {type: "checkbox", width: 50},
-                {field: 'id',  title: 'ID', sort: true},
+                {field: 'id',  title: 'ID', hide: true, sort: true},
+                {field: '', title: '序号', type: 'numbers'},
                 {field: 'username',  title: '用户名'},
                 {field: 'nickName',  title: '昵称', },
                 {field: 'createTime',  title: '创建时间', templet: "<div>{{layui.util.toDateString(d.createTime)}}</div>"},
@@ -169,7 +170,7 @@
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '/user/role',
+                    content: '/user/role?userId='+data.id,
                     success: function(layero, index) {
                     }
                 });

@@ -20,7 +20,7 @@
     <div id="test7" class="demo-transfer"></div>
 
     <div class="layui-input-block">
-        <button type="button" class="layui-btn layui-btn-normal" lay-transferactive="getData">获取右侧数据</button>
+        <button type="button" class="layui-btn layui-btn-normal" lay-transferactive="getData">确认保存</button>
     </div>
 </div>
 
@@ -30,25 +30,30 @@
     layui.use('transfer', function(){
        var transfer = layui.transfer, $ = layui.jquery, layer = layui.layer,util = layui.util;
 
-        //模拟数据
-        var data1 = [
-            {"value": "1", "title": "李白"}
-            ,{"value": "2", "title": "杜甫"}
-            ,{"value": "3", "title": "苏轼"}
-            ,{"value": "4", "title": "李清照"}
-            ,{"value": "6", "title": "巴金"}
-            ,{"value": "7", "title": "冰心"}
-            ,{"value": "8", "title": "矛盾"}
-            ,{"value": "9", "title": "贤心"}
-        ];
+        var getQueryVariable  = function (variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) { return pair[1]; }
+            }
+            return (false);
+        }
 
+        var userId = getQueryVariable("userId");
         var roleData;
+        var have = [];
         var ss = $.ajax({
-            url: '/role',
+            url: '/role?userId=' + userId,
             async: false,
             method: 'get',
             success: function (result) {
                 roleData = result;
+                for (var item of result) {
+                    if (item.have) {
+                        have.push(item.id);
+                    }
+                }
             }
         });
 
@@ -64,13 +69,33 @@
                     "checked": res.checked
                 }
             },
-            value: ['2', '9']
+            value: have
         })
 
         util.event("lay-transferactive", {
             getData: function() {
-                var getData = transfer.getData('selectKey'); //获取右侧数据
-                layer.alert(JSON.stringify(getData))
+                var roles = eval(transfer.getData('selectKey')); //获取右侧数据
+                var roleIds = [];
+                for(var i=0; i<roles.length; i++) {
+                    roleIds.push(Number(roles[i].value));
+                }
+
+                var userRole = {};
+                userRole.userId = getQueryVariable("userId");
+                userRole.roleIds = roleIds;
+
+                $.ajax({
+                    url: '/user/add_role',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(userRole),
+                    success: function() {
+                        layer.confirm('涉及角色被修改的用户，重新登录后生效', function (index) {
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        });
+                    }
+                });
             }
         });
     });

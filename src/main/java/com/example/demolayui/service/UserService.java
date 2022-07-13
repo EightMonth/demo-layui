@@ -1,12 +1,16 @@
 package com.example.demolayui.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.example.demolayui.entity.SysRole;
 import com.example.demolayui.entity.SysUser;
 import com.example.demolayui.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +31,18 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> {
         entity.setCreateTime(new Date());
         entity.setModifyTime(new Date());
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
-        return super.save(entity);
+        int id = baseMapper.insert(entity);
+
+        SysRole defaultRole = roleService.defaultRole();
+        baseMapper.insertUserRole((long) id, defaultRole.getId());
+
+        return SqlHelper.retBool(id);
+    }
+
+    @Override
+    public boolean removeByIds(Collection<? extends Serializable> idList) {
+        idList.forEach(p -> baseMapper.deleteUserRole((Long) p));
+        return super.removeByIds(idList);
     }
 
     @Override
@@ -60,5 +75,11 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> {
 
     private void fillRole(List<SysUser> sysRoleList) {
         sysRoleList.forEach(this::fillRole);
+    }
+
+    public void addRole(Long userId, List<Long> roleIds)  {
+        baseMapper.deleteUserRole(userId);
+
+        roleIds.forEach(p -> baseMapper.insertUserRole(userId, p));
     }
 }

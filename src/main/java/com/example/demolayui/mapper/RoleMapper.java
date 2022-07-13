@@ -29,4 +29,7 @@ public interface RoleMapper extends BaseMapper<SysRole> {
 
     @Delete("delete from t_sys_role_menu where role_Id = #{roleId}")
     void removeAllMenu(@Param("roleId") Long roleId);
+
+    @Select("select * from t_sys_role where code = 'default'")
+    SysRole defaultRole();
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -64,5 +66,15 @@ public class RoleService extends ServiceImpl<RoleMapper, SysRole> {
         menuIds.forEach(m -> {
             baseMapper.addMenu(roleId, m);
         });
+    }
+
+    public SysRole defaultRole() {
+        return baseMapper.defaultRole();
+    }
+
+    @Override
+    public boolean removeByIds(Collection<? extends Serializable> idList) {
+        idList.forEach(p -> baseMapper.removeAllMenu((Long) p));
+        return super.removeByIds(idList);
     }
 }

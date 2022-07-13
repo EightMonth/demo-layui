@@ -67,10 +67,9 @@
             }],
             cols: [[
                 {type: "checkbox", width: 50},
-                {field: 'id',  title: 'ID', sort: true},
-                {field: 'code',  title: 'code'},
+                {field: '', title: '序号', type: 'numbers'},
+                {field: 'id',  title: 'ID', hide: true, sort: true},
                 {field: 'name',  title: '角色名' },
-                {field: 'remark', title: '备注'},
                 {field: 'createTime',  title: '创建时间', templet: "<div>{{layui.util.toDateString(d.createTime)}}</div>"},
                 {field: 'modifyTime', title: '修改时间', templet: "<div>{{layui.util.toDateString(d.modifyTime)}}</div>"},
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}

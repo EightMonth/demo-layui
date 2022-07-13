@@ -43,10 +43,10 @@ public class SysUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        if (CollectionUtils.isEmpty(roles)) {
-            authorities.add(new SimpleGrantedAuthority("default"));
-            return authorities;
-        }
+//        if (CollectionUtils.isEmpty(roles)) {
+//            authorities.add(new SimpleGrantedAuthority("default"));
+//            return authorities;
+//        }
 
         for (SysRole role : getRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
