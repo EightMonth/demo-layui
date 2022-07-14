@@ -37,19 +37,19 @@ public class RoleController {
 
     @GetMapping("list")
     public String listPage() {
-        return "/role/list";
+        return "role/list";
     }
     @GetMapping("add")
     public String addPage() {
-        return "/role/add";
+        return "role/add";
     }
     @GetMapping("edit")
     public String editPage() {
-        return "/role/edit";
+        return "role/edit";
     }
     @GetMapping("menu")
     public String menuPage() {
-        return "/role/menu";
+        return "role/menu";
     }
 
     @GetMapping

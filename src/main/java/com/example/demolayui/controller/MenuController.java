@@ -29,15 +29,15 @@ public class MenuController {
 
     @GetMapping("list")
     public String listPage() {
-        return "/menu/list";
+        return "menu/list";
     }
     @GetMapping("add")
     public String addPage() {
-        return "/menu/add";
+        return "menu/add";
     }
     @GetMapping("edit")
     public String editPage() {
-        return "/menu/edit";
+        return "menu/edit";
     }
 
     @GetMapping("tree")

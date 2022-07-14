@@ -38,15 +38,15 @@ public class UserController {
 
     @GetMapping("list")
     public String listPage() {
-        return "/user/list";
+        return "user/list";
     }
     @GetMapping("add")
     public String addPage() {
-        return "/user/add";
+        return "user/add";
     }
     @GetMapping("edit")
     public String editPage() {
-        return "/user/edit";
+        return "user/edit";
     }
     @GetMapping("setting")
     public ModelAndView userSetting() {
@@ -61,7 +61,7 @@ public class UserController {
     }
     @GetMapping("role")
     public String role() {
-        return "/user/role";
+        return "user/role";
     }
 
     @GetMapping
