@@ -25,10 +25,8 @@ jobs:
       - name: Push Docker
         run: |
           docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }} https://registry-1.docker.io/v2/
-          docker build . -t eightmonth/demo-layui:$GITHUB_RUN_NUMBER
-          docker push eightmonth/demo-layui:$GITHUB_RUN_NUMBER
-          docker tag $(docker images eightmonth/demo-layui:$GITHUB_RUN_NUMBER -q) eightmonth/demo-layui:latest
-          docker push eightmonth/demo-layui:latest
+          docker build . -t eightmonth/demo-layui
+          docker push eightmonth/demo-layui
 
 
 
@@ -44,7 +42,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.PORT }}
+          port: 22
           script: |
             docker stop $(docker ps --filter ancestor=eightmonth/demo-layui -q)
             docker rm -f $(docker ps -a --filter ancestor=eightmonth/demo-layui:latest -q)
